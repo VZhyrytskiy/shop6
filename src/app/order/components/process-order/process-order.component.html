@@ -1,3 +1,78 @@
-<p>
-    process-order works!
-</p>
+<form [formGroup]="orderForm" (ngSubmit)="submitOrder()" class="m-4">
+
+    <div class="form-group">
+        <label for="firstName">First Name:</label>
+        <input type="text"
+            id="firstName"
+            formControlName="firstName"
+            class="form-control"
+            [ngClass]="{'is-invalid': orderForm.controls.firstName.invalid && orderForm.controls.firstName.touched}"
+        >
+        <div *ngIf="getErrorMessage('firstName') as message" class="invalid-feedback">
+            {{message}}
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" formControlName="lastName" class="form-control">
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email:</label>
+        <input appEmailValidation
+            type="email"
+            id="email"
+            formControlName="email"
+            class="form-control"
+            [ngClass]="{'is-invalid': orderForm.controls.email.invalid && orderForm.controls.email.touched}"
+        >
+        <div *ngIf="getErrorMessage('email') as message" class="invalid-feedback">
+            {{message}}
+        </div>
+    </div>
+
+    <div formArrayName="phoneNumbers">
+        <div class="form-group" *ngFor="let phone of this.orderForm.controls.phoneNumbers.controls; let i = index">
+            <label for="Phone{{i+1}}">Phone {{ i + 1 }}:</label>
+            <div class="input-group">
+                <input type="text" id="Phone{{i+1}}" formControlName="{{i}}" class="form-control">
+                <div class="input-group-append">
+                    <button type="button"
+                        [disabled]="this.orderForm.controls.phoneNumbers.controls.length == 1"
+                        class="btn btn-danger"
+                        (click)="removePhone(i)">
+                        Remove
+                    </button>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-primary my-2" (click)="addPhone()">Add Phone</button>
+    </div>
+
+    <div class="form-check my-2">
+        <input #showDelivery
+            type="checkbox"
+            id="delivery"
+            formControlName="delivery"
+            class="form-check-input"
+        >
+        <label class="form-check-label" for="delivery">Pickup</label>
+    </div>
+
+    <div *ngIf="showDelivery.checked" class="form-group">
+        <label for="address">Delivery Address:</label>
+        <textarea id="address"
+            formControlName="address"
+            class="form-control"
+            [ngClass]="{'is-invalid': orderForm.controls.address.invalid && orderForm.controls.address.touched}">
+        </textarea>
+        <div *ngIf="getErrorMessage('address') as message" class="invalid-feedback">
+            {{message}}
+        </div>
+    </div>
+
+    <button type="submit" [disabled]="orderForm.invalid" class="btn btn-primary my-2">
+        Complete Order
+    </button>
+</form>
